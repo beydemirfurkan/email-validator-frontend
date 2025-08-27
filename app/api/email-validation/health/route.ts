@@ -5,7 +5,7 @@ export async function GET() {
     // Forward request to backend
     const backendUrl = process.env.BACKEND_API_URL || 'https://web-production-05991.up.railway.app'
     
-    const response = await fetch(`${backendUrl}/api/email-validation/health`, {
+    const response = await fetch(`${backendUrl}/api/health`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

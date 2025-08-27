@@ -92,8 +92,9 @@ export default function BlocklistPage() {
   })
 
   const addToBlocklistMutation = useMutation({
-    mutationFn: async (_data: { item: string; type: string; reason: string }) => {
-      // Mock API call
+    mutationFn: async (data: { item: string; type: string; reason: string }) => {
+      // Mock API call - data will be used when real API is implemented
+      console.log('Adding to blocklist:', data)
       await new Promise(resolve => setTimeout(resolve, 1000))
       return { success: true }
     },
@@ -110,8 +111,9 @@ export default function BlocklistPage() {
   })
 
   const removeFromBlocklistMutation = useMutation({
-    mutationFn: async (_id: number) => {
-      // Mock API call
+    mutationFn: async (id: number) => {
+      // Mock API call - id will be used when real API is implemented
+      console.log('Removing from blocklist:', id)
       await new Promise(resolve => setTimeout(resolve, 500))
       return { success: true }
     },

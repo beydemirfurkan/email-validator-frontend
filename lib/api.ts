@@ -373,6 +373,55 @@ class ApiClient {
 
     return response.blob()
   }
+
+  // Analytics
+  async getValidationLogs(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<ApiResponse<{
+    logs: Array<{
+      id: number
+      email: string
+      status: 'valid' | 'invalid' | 'risky'
+      score: number
+      processingTime: number
+      createdAt: string
+    }>
+    total: number
+  }>> {
+    return this.request(`/api/analytics/validation-logs?page=${page}&limit=${limit}`)
+  }
+
+  // Contact Lists
+  async getContactLists(): Promise<ApiResponse<ContactList[]>> {
+    return this.request('/api/contact-lists')
+  }
+
+  async createContactList(name: string, description?: string): Promise<ApiResponse<{ contactList: ContactList }>> {
+    return this.request('/api/contact-lists', {
+      method: 'POST',
+      body: JSON.stringify({ name, description })
+    })
+  }
+
+  async deleteContactList(id: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return this.request(`/api/contact-lists/${id}`, {
+      method: 'DELETE'
+    })
+  }
+
+  async validateContactList(id: number): Promise<ApiResponse<Record<string, unknown>>> {
+    return this.request(`/api/contact-lists/${id}/validate`, {
+      method: 'POST'
+    })
+  }
+
+  async updateContactList(id: number, name: string, description?: string): Promise<ApiResponse<{ contactList: ContactList }>> {
+    return this.request(`/api/contact-lists/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, description })
+    })
+  }
 }
 
 export const api = new ApiClient()

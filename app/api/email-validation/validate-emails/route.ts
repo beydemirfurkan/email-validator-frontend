@@ -6,6 +6,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { emails } = body
     console.log('📧 Received emails:', emails?.length || 0, 'emails')
+    
+    // Debug auth headers
+    const authorization = request.headers.get('authorization')
+    const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
+    console.log('🔑 Authorization header:', authorization ? 'Present' : 'Missing')
+    console.log('🗝️ API Key header:', apiKey ? 'Present' : 'Missing')
 
     if (!emails || !Array.isArray(emails)) {
       console.log('❌ Invalid emails array provided')
@@ -27,9 +33,7 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
-    // Forward authorization headers (JWT or API Key)
-    const authorization = request.headers.get('authorization')
-    const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
+    // Authorization headers already defined above for debug
     
     if (authorization) {
       headers.Authorization = authorization
@@ -38,9 +42,9 @@ export async function POST(request: NextRequest) {
       headers['X-API-Key'] = apiKey
     }
 
-    console.log('🌐 Making request to backend:', `${backendUrl}/api/email-validation/validate-emails`)
+    console.log('🌐 Making request to backend:', `${backendUrl}/api/validate-emails`)
     
-    const response = await fetch(`${backendUrl}/api/email-validation/validate-emails`, {
+    const response = await fetch(`${backendUrl}/api/validate-emails`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ emails }),

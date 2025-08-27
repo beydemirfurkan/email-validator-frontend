@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth'
 import { CheckIcon } from 'lucide-react'
-import Cookies from 'js-cookie'
 
 export default function HomePage() {
   const { isAuthenticated, isLoading } = useAuth()

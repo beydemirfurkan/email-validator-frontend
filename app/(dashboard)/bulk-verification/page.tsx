@@ -43,6 +43,9 @@ export default function BulkVerificationPage() {
       if (response.success && response.data) {
         setResults(response.data.results)
         toast.success(`Validated ${response.data.results.length} emails successfully!`)
+        
+        // Note: Backend tracking not working - this would normally be automatic
+        console.log(`📊 Validated ${response.data.results.length} emails (Backend tracking issue)`)
       } else {
         toast.error(response.error || 'Validation failed')
       }
@@ -336,28 +339,37 @@ export default function BulkVerificationPage() {
             <Separator />
 
             {/* Results Table */}
-            <div className="max-h-96 overflow-auto">
-              <Table>
-                <TableHeader>
+            <div className="max-h-96 overflow-auto border rounded-lg">
+              <div className="overflow-x-auto">
+                <Table className="min-w-full">
+                <TableHeader className="sticky top-0 bg-gray-50 border-b">
                   <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Reason</TableHead>
+                    <TableHead className="w-[250px] font-semibold">Email Address</TableHead>
+                    <TableHead className="w-[100px] text-center font-semibold">Status</TableHead>
+                    <TableHead className="w-[80px] text-center font-semibold">Score</TableHead>
+                    <TableHead className="w-[80px] text-center font-semibold">Format</TableHead>
+                    <TableHead className="w-[80px] text-center font-semibold">MX</TableHead>
+                    <TableHead className="w-[100px] text-center font-semibold">Disposable</TableHead>
+                    <TableHead className="w-[90px] text-center font-semibold">Type</TableHead>
+                    <TableHead className="w-[120px] font-semibold">Provider</TableHead>
+                    <TableHead className="w-[90px] text-center font-semibold">Time</TableHead>
+                    <TableHead className="w-[80px] text-center font-semibold">Cache</TableHead>
+                    <TableHead className="w-[200px] font-semibold">Issues</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {results.map((result, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-mono text-sm">
-                        {result.email}
+                    <TableRow key={index} className="hover:bg-gray-50 transition-colors">
+                      <TableCell className="font-mono text-sm font-medium">
+                        <div className="break-all">{result.email}</div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <Badge 
                           variant={
                             result.valid && result.score >= 80 ? 'default' :
                             !result.valid || result.score < 50 ? 'destructive' : 'secondary'
                           }
+                          className="font-medium"
                         >
                           <span className="flex items-center">
                             {result.valid && result.score >= 80 ? (
@@ -372,18 +384,87 @@ export default function BulkVerificationPage() {
                           </span>
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium">
-                          {result.score}/100
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center">
+                          <span className={`text-sm font-bold ${
+                            result.score >= 80 ? 'text-green-600' :
+                            result.score >= 50 ? 'text-orange-600' : 'text-red-600'
+                          }`}>
+                            {result.score}
+                          </span>
+                          <span className="text-xs text-muted-foreground ml-1">/100</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge 
+                          variant={result.details?.format ? 'default' : 'destructive'} 
+                          className="text-xs w-6 h-6 rounded-full p-0 flex items-center justify-center"
+                        >
+                          {result.details?.format ? '✓' : '✗'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge 
+                          variant={result.details?.mx ? 'default' : 'destructive'} 
+                          className="text-xs w-6 h-6 rounded-full p-0 flex items-center justify-center"
+                        >
+                          {result.details?.mx ? '✓' : '✗'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge 
+                          variant={!result.details?.disposable ? 'default' : 'destructive'} 
+                          className="text-xs"
+                        >
+                          {!result.details?.disposable ? 'Safe' : 'Disposable'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge 
+                          variant={result.details?.role ? 'secondary' : 'default'} 
+                          className="text-xs"
+                        >
+                          {result.details?.role ? 'Role' : 'Personal'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {result.provider ? (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                            {result.provider}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Unknown</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="text-sm font-mono">
+                          {result.processingTime ? `${Math.round(result.processingTime)}ms` : 'N/A'}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {result.reason.length > 0 ? result.reason[0] : 'No issues found'}
+                      <TableCell className="text-center">
+                        <Badge 
+                          variant={result.fromCache ? 'secondary' : 'outline'} 
+                          className="text-xs"
+                        >
+                          {result.fromCache ? '⚡ Cached' : '🔄 Fresh'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        <div className="max-w-[180px]">
+                          {result.reason && result.reason.length > 0 ? (
+                            <span className="text-red-600 font-medium">
+                              {result.reason.join(', ')}
+                            </span>
+                          ) : (
+                            <span className="text-green-600 font-medium">No issues found</span>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+                </Table>
+              </div>
             </div>
           </CardContent>
         </Card>

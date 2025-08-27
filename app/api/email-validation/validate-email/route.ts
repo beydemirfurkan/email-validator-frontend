@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
+  console.log('🚀 /api/email-validation/validate-email endpoint called')
   try {
     const body = await request.json()
     const { email } = body
+    console.log('📧 Validating email:', email)
+    
+    // Debug auth headers
+    const authorization = request.headers.get('authorization')
+    const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
+    console.log('🔑 Authorization header:', authorization ? 'Present' : 'Missing')
+    console.log('🗝️ API Key header:', apiKey ? 'Present' : 'Missing')
 
     if (!email) {
       return NextResponse.json(
@@ -23,9 +31,7 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
-    // Forward authorization headers (JWT or API Key)
-    const authorization = request.headers.get('authorization')
-    const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
+    // Authorization headers already defined above for debug
     
     if (authorization) {
       headers.Authorization = authorization
@@ -34,7 +40,7 @@ export async function POST(request: NextRequest) {
       headers['X-API-Key'] = apiKey
     }
 
-    const response = await fetch(`${backendUrl}/api/email-validation/validate-email`, {
+    const response = await fetch(`${backendUrl}/api/validate-email`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ email }),
