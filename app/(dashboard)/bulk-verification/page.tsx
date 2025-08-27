@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { api, type ValidationResult } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -59,7 +59,7 @@ export default function BulkVerificationPage() {
     mutationFn: (file: File) => api.uploadCsv(file, true),
     onSuccess: (response) => {
       if (response.success && response.data) {
-        setResults(response.data.results)
+        setResults((response.data as { results: ValidationResult[] }).results)
         toast.success('CSV processed successfully!')
       }
       setIsProcessing(false)
@@ -130,7 +130,7 @@ export default function BulkVerificationPage() {
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
       toast.success('Results exported successfully!')
-    } catch (error) {
+    } catch {
       toast.error('Export failed')
     }
   }
@@ -239,14 +239,33 @@ export default function BulkVerificationPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <UploadIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 mb-2">
-                Click to upload or drag and drop your CSV file
-              </p>
-              <p className="text-xs text-gray-500">
-                Maximum file size: 100MB
-              </p>
+            <div 
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer hover:border-gray-400 ${
+                isProcessing ? 'border-gray-200 bg-gray-50' : 'border-gray-300'
+              }`}
+              onClick={() => !isProcessing && fileInputRef.current?.click()}
+            >
+              {isProcessing ? (
+                <>
+                  <ClockIcon className="h-8 w-8 text-gray-400 mx-auto mb-2 animate-spin" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    Processing CSV file...
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Please wait while we validate your emails
+                  </p>
+                </>
+              ) : (
+                <>
+                  <UploadIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    Click to upload or drag and drop your CSV file
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Maximum file size: 100MB
+                  </p>
+                </>
+              )}
               <input
                 ref={fileInputRef}
                 type="file"

@@ -12,10 +12,9 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { 
   UserIcon,
-  MailIcon,
   KeyIcon,
   ShieldIcon,
-  DevicesIcon,
+  MonitorIcon,
   LogOutIcon,
   EyeIcon,
   EyeOffIcon,
@@ -360,7 +359,7 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <DevicesIcon className="h-5 w-5" />
+                <MonitorIcon className="h-5 w-5" />
                 <span>Browser Sessions</span>
               </CardTitle>
               <CardDescription>
@@ -373,7 +372,7 @@ export default function ProfilePage() {
                 <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <DevicesIcon className="w-5 h-5 text-gray-600" />
+                      <MonitorIcon className="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
                       <div className="font-medium flex items-center space-x-2">

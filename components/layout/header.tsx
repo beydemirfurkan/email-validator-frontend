@@ -25,7 +25,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
@@ -89,21 +89,19 @@ export function Header() {
               </Link>
             </DropdownMenuItem>
             
-            <DropdownMenuItem>
+            <DropdownMenuItem disabled>
               <SettingsIcon className="w-4 h-4 mr-2" />
-              Webhooks
+              Webhooks (Soon)
             </DropdownMenuItem>
             
-            <DropdownMenuItem>
+            <DropdownMenuItem disabled>
               <UserIcon className="w-4 h-4 mr-2" />
-              Team
+              Team (Soon)
             </DropdownMenuItem>
             
-            <DropdownMenuItem asChild>
-              <Link href="/billing" className="flex items-center">
-                <CreditCardIcon className="w-4 h-4 mr-2" />
-                Billing
-              </Link>
+            <DropdownMenuItem disabled>
+              <CreditCardIcon className="w-4 h-4 mr-2" />
+              Billing (Soon)
             </DropdownMenuItem>
             
             <DropdownMenuItem asChild>

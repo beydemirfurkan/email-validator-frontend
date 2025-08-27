@@ -6,7 +6,6 @@ import { api } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { 
   Table, 
   TableBody, 
@@ -25,7 +24,8 @@ import {
   AlertCircleIcon,
   TrendingUpIcon,
   CalendarIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  UserIcon
 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
@@ -54,13 +54,13 @@ export default function DashboardPage() {
 
   // Set first API key
   useEffect(() => {
-    if (apiKeysData?.success && apiKeysData.data?.apiKeys?.length > 0) {
+    if (apiKeysData?.success && apiKeysData.data?.apiKeys && apiKeysData.data.apiKeys.length > 0) {
       setApiKey(`evapi_${'*'.repeat(20)}...${apiKeysData.data.apiKeys[0].keyName.slice(-4)}`)
     }
   }, [apiKeysData])
 
   const copyApiKey = async () => {
-    if (apiKeysData?.success && apiKeysData.data?.apiKeys?.length > 0) {
+    if (apiKeysData?.success && apiKeysData.data?.apiKeys && apiKeysData.data.apiKeys.length > 0) {
       // In real app, you'd get the full key from creation response
       toast.success('API key copied to clipboard')
     }
@@ -92,7 +92,7 @@ export default function DashboardPage() {
   ]
 
   // Mock chart data
-  const chartData = dashboardData?.success ? 
+  const chartData = dashboardData?.success && dashboardData.data ? 
     dashboardData.data.dashboard.recentActivity.map(item => ({
       date: item.date,
       requests: item.validations
@@ -106,8 +106,8 @@ export default function DashboardPage() {
       { date: '2024-01-15', requests: 123 }
     ]
 
-  const dashboard = dashboardData?.success ? dashboardData.data.dashboard : null
-  const usage = usageData?.success ? usageData.data.usage : null
+  const dashboard = dashboardData?.success && dashboardData.data ? dashboardData.data.dashboard : null
+  const usage = usageData?.success && usageData.data ? usageData.data.usage : null
 
   if (dashboardLoading && !dashboard) {
     return (
@@ -226,11 +226,17 @@ export default function DashboardPage() {
               </Button>
             </div>
 
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" asChild>
                 <a href="/api-keys" className="flex items-center">
                   <SettingsIcon className="h-4 w-4 mr-2" />
                   Manage Keys
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href="/contact-lists" className="flex items-center">
+                  <UserIcon className="h-4 w-4 mr-2" />
+                  Contact Lists
                 </a>
               </Button>
               <Button variant="outline" size="sm">

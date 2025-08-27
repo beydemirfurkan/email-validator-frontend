@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, type ApiKey } from '@/lib/api'
+import { api } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -147,7 +147,7 @@ export default function ApiKeysPage() {
     return `evapi_${keyName.toLowerCase().replace(/\s+/g, '_')}_${Math.random().toString(36).slice(2)}`
   }
 
-  const apiKeys = apiKeysData?.success ? apiKeysData.data.apiKeys : []
+  const apiKeys = apiKeysData?.success ? apiKeysData.data?.apiKeys || [] : []
 
   return (
     <div className="space-y-6">

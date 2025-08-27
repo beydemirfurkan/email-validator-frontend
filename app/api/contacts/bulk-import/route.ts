@@ -3,19 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { emails } = body
-
-    if (!emails || !Array.isArray(emails)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Emails array is required',
-          timestamp: new Date().toISOString(),
-        },
-        { status: 400 }
-      )
-    }
-
+    
     // Forward request to backend
     const backendUrl = process.env.BACKEND_API_URL || 'https://web-production-05991.up.railway.app'
     
@@ -23,28 +11,22 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
-    // Forward authorization headers (JWT or API Key)
+    // Forward authorization header
     const authorization = request.headers.get('authorization')
-    const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
-    
     if (authorization) {
       headers.Authorization = authorization
     }
-    if (apiKey) {
-      headers['X-API-Key'] = apiKey
-    }
 
-    const response = await fetch(`${backendUrl}/api/validate-emails`, {
+    const response = await fetch(`${backendUrl}/api/contacts/bulk-import`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ emails }),
+      body: JSON.stringify(body),
     })
 
     const data = await response.json()
-
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Validate emails API error:', error)
+    console.error('Bulk import contacts API error:', error)
     return NextResponse.json(
       {
         success: false,

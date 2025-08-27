@@ -10,9 +10,9 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50/50 to-purple-50/30">
         <Header />
-        <main className="container py-6">
+        <main className="container mx-auto px-4 py-6">
           {children}
         </main>
       </div>

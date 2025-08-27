@@ -11,8 +11,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
+    // Only redirect if we're sure there's no authentication
     if (!isLoading && !isAuthenticated) {
-      router.push('/login')
+      // Add a small delay to ensure auth initialization is complete
+      setTimeout(() => {
+        if (!useAuth.getState().isAuthenticated) {
+          router.push('/login')
+        }
+      }, 100)
     }
   }, [isAuthenticated, isLoading, router])
 

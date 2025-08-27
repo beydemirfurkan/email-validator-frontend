@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
 console.log('API_URL:', API_URL, 'ENV:', process.env.NEXT_PUBLIC_API_URL)
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string
@@ -30,7 +30,7 @@ export interface ValidationResult {
   provider?: string
   processingTime?: number
   fromCache?: boolean
-  error?: any
+  error?: unknown
 }
 
 export interface User {
@@ -318,7 +318,7 @@ class ApiClient {
   }
 
   async getCurrentSubscription(): Promise<ApiResponse<{
-    subscription: any
+    subscription: Record<string, unknown>
   }>> {
     return this.request('/api/plans/subscriptions')
   }
@@ -339,7 +339,7 @@ class ApiClient {
   async uploadCsv(
     file: File,
     immediate: boolean = true
-  ): Promise<ApiResponse<any>> {
+  ): Promise<ApiResponse<Record<string, unknown>>> {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('immediate', immediate.toString())

@@ -3,19 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email } = body
-
-    if (!email) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Email is required',
-          timestamp: new Date().toISOString(),
-        },
-        { status: 400 }
-      )
-    }
-
+    
     // Forward request to backend
     const backendUrl = process.env.BACKEND_API_URL || 'https://web-production-05991.up.railway.app'
     
@@ -23,7 +11,7 @@ export async function POST(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
-    // Forward authorization headers (JWT or API Key)
+    // Forward authorization headers
     const authorization = request.headers.get('authorization')
     const apiKey = request.headers.get('x-api-key') || request.headers.get('api-key')
     
@@ -34,17 +22,28 @@ export async function POST(request: NextRequest) {
       headers['X-API-Key'] = apiKey
     }
 
-    const response = await fetch(`${backendUrl}/api/validate-email`, {
+    const response = await fetch(`${backendUrl}/api/files/export-excel`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ email }),
+      body: JSON.stringify(body),
     })
 
-    const data = await response.json()
+    // Return as blob for Excel download
+    if (response.ok) {
+      const blob = await response.blob()
+      return new NextResponse(blob, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': 'attachment; filename="validation-results.xlsx"',
+        },
+      })
+    }
 
+    const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Validate email API error:', error)
+    console.error('Export Excel API error:', error)
     return NextResponse.json(
       {
         success: false,

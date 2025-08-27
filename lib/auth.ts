@@ -18,7 +18,7 @@ interface AuthState {
 export const useAuth = create<AuthState>()((set, get) => ({
   user: null,
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true, // Start with loading true to prevent premature redirects
 
   login: async (email: string, password: string) => {
         set({ isLoading: true })
@@ -89,7 +89,7 @@ export const useAuth = create<AuthState>()((set, get) => ({
       refreshUser: async () => {
         const token = Cookies.get('auth-token')
         if (!token) {
-          set({ user: null, isAuthenticated: false })
+          set({ user: null, isAuthenticated: false, isLoading: false })
           return
         }
 
@@ -98,7 +98,8 @@ export const useAuth = create<AuthState>()((set, get) => ({
           if (response.success && response.data) {
             set({ 
               user: response.data.user, 
-              isAuthenticated: true 
+              isAuthenticated: true,
+              isLoading: false
             })
           } else {
             // Token is invalid
@@ -120,5 +121,8 @@ export const initAuth = async () => {
   const token = Cookies.get('auth-token')
   if (token) {
     await useAuth.getState().refreshUser()
+  } else {
+    // No token, set loading to false
+    useAuth.setState({ isLoading: false })
   }
 }

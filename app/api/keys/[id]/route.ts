@@ -40,10 +40,11 @@ async function forwardRequest(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    return await forwardRequest(request, params, 'PUT')
+    const resolvedParams = await params
+    return await forwardRequest(request, resolvedParams, 'PUT')
   } catch (error) {
     console.error('Update API key error:', error)
     return NextResponse.json(
@@ -59,10 +60,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: RouteParams }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    return await forwardRequest(request, params, 'DELETE')
+    const resolvedParams = await params
+    return await forwardRequest(request, resolvedParams, 'DELETE')
   } catch (error) {
     console.error('Delete API key error:', error)
     return NextResponse.json(
