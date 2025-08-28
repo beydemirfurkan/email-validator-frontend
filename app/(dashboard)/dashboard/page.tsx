@@ -46,9 +46,7 @@ export default function DashboardPage() {
       console.log('🔍 Fetching dashboard data...')
       return api.getDashboard()
     },
-    refetchInterval: 30000, // Refresh every 30 seconds
-    onError: (error) => console.error('❌ Dashboard fetch error:', error),
-    onSuccess: (data) => console.log('✅ Dashboard data:', data)
+    refetchInterval: 30000 // Refresh every 30 seconds
   })
 
   // Fetch user's first API key
@@ -63,9 +61,7 @@ export default function DashboardPage() {
     queryFn: () => {
       console.log('🔍 Fetching usage data...')
       return api.getUsage()
-    },
-    onError: (error) => console.error('❌ Usage fetch error:', error),
-    onSuccess: (data) => console.log('✅ Usage data:', data)
+    }
   })
 
   // Set first API key
@@ -126,9 +122,7 @@ export default function DashboardPage() {
       console.log('🔍 Fetching validation logs...')
       return api.getValidationLogs(1, 5) // Get 5 recent logs
     },
-    refetchInterval: 30000,
-    onError: (error) => console.error('❌ Validation logs fetch error:', error),
-    onSuccess: (data) => console.log('✅ Validation logs data:', data)
+    refetchInterval: 30000
   })
 
   // Mock chart data
@@ -148,6 +142,25 @@ export default function DashboardPage() {
 
   const dashboard = dashboardData?.success && dashboardData.data ? dashboardData.data.dashboard : null
   const usage = usageData?.success && usageData.data ? usageData.data.usage : null
+
+  // Handle query success/error logging
+  useEffect(() => {
+    if (dashboardData?.success) {
+      console.log('✅ Dashboard data:', dashboardData)
+    }
+  }, [dashboardData])
+
+  useEffect(() => {
+    if (usageData?.success) {
+      console.log('✅ Usage data:', usageData)
+    }
+  }, [usageData])
+
+  useEffect(() => {
+    if (validationLogsData?.success) {
+      console.log('✅ Validation logs data:', validationLogsData)
+    }
+  }, [validationLogsData])
 
   // Auth debug info
   useEffect(() => {
