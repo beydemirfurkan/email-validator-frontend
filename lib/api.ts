@@ -392,17 +392,7 @@ class ApiClient {
     return this.request(`/api/analytics/validation-logs?page=${page}&limit=${limit}`)
   }
 
-  // Contact Lists
-  async getContactLists(): Promise<ApiResponse<ContactList[]>> {
-    return this.request('/api/contact-lists')
-  }
-
-  async createContactList(name: string, description?: string): Promise<ApiResponse<{ contactList: ContactList }>> {
-    return this.request('/api/contact-lists', {
-      method: 'POST',
-      body: JSON.stringify({ name, description })
-    })
-  }
+  // Additional Contact List methods
 
   async deleteContactList(id: number): Promise<ApiResponse<Record<string, unknown>>> {
     return this.request(`/api/contact-lists/${id}`, {

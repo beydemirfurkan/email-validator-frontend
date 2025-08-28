@@ -68,7 +68,7 @@ export default function ContactListsPage() {
 
   const createListMutation = useMutation({
     mutationFn: (data: { name: string; description: string }) => 
-      api.createContactList(data.name, data.description),
+      api.createContactList(data),
     onSuccess: () => {
       toast.success('Contact list created successfully!')
       setIsCreateDialogOpen(false)
